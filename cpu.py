@@ -12,7 +12,7 @@ class CPU:
         self.ram = [0] * 256 # allocate 256 bytes of memory
         self.pc = 0
         self.reg = [0] * 8
-        self.fl = 0
+        self.fl  = 0
         self.HLT = 0b00000001
         self.PRN = 0b01000111
         self.LDI = 0b10000010
@@ -21,7 +21,16 @@ class CPU:
         self.PUSH= 0b01000101
         self.CALL= 0b01010000
         self.RET = 0b00010001
-        self.sp = 0xf4
+        self.sp  = 0xf4
+        self.CMP = 0b10100111
+        self.E   = 0
+        self.L   = 0
+        self.G   = 0
+        self.JMP = 0b01010100
+        self.JEQ = 0b01010101
+        self.JNE = 0b01010110
+
+
 
     def ram_read(self, MAR):
         value = self.ram[MAR]
@@ -82,6 +91,26 @@ class CPU:
 
         elif op == self.MUL:
             self.reg[reg_a] *= self.reg[reg_b]
+
+        elif op == self.CMP:
+            if self.reg[reg_a] == self.reg[reg_b]:
+
+                self.E = 1
+                self.L = 0
+                self.G = 0
+
+            elif self.reg[reg_a] <= self.reg[reg_b]:
+
+                self.E = 0
+                self.L = 1
+                self.G = 0
+
+            else:
+
+                self.E = 0
+                self.L = 0
+                self.G = 1
+
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -150,14 +179,24 @@ class CPU:
                 self.ram[self.sp] = self.reg[operand_a]
                 self.pc += 2
 
-            elif IR == self.CALL:
-                self.sp = (self.sp - 1)
-                self.ram[self.sp] = self.reg[operand_a]
-                self.pc += 1
+            elif IR == self.CMP:
+                self.alu(self.CMP, operand_a, operand_b)
+                self.pc += 3
 
-            elif IR == self.RET:
-                self.sp = (self.sp + 1)
+            elif IR == self.JMP:
+                self.pc = self.reg[operand_a]
 
+            elif IR == self.JEQ:
+               if self.E == 1:
+                   self.pc = self.reg[operand_a]
+               else:
+                   self.pc += 2
+
+            elif IR == self.JEQ:
+               if self.E == 0:
+                   self.pc = self.reg[operand_a]
+               else:
+                   self.pc += 2
 
             else:
                 print(f'Unknown instruction at index {self.pc}')

@@ -63,7 +63,7 @@ than one that attempts too much and does not.
 
 Validate your work through testing and ensure that your code operates as designed.
 
-[Here is some code](sctest.ls8) that exercises the above instructions. It should
+[Here is some code](examples/sctest.ls8) that exercises the above instructions. It should
 print:
 
 ```
