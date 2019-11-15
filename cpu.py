@@ -162,7 +162,6 @@ class CPU:
 
             elif IR == self.HLT:
                 halted = True
-                self.pc += 1
 
 
             elif IR == self.MUL:
@@ -192,7 +191,7 @@ class CPU:
                else:
                    self.pc += 2
 
-            elif IR == self.JEQ:
+            elif IR == self.JNE:
                if self.E == 0:
                    self.pc = self.reg[operand_a]
                else:
